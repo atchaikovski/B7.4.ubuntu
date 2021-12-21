@@ -1,7 +1,7 @@
 # ------------------- EC2 resources ---------------------------------
 
 resource "aws_instance" "master" {
-  ami                         = "ami-0e472ba40eb589f49"
+  ami                         = "ami-0e472ba40eb589f49" # ubuntu
   instance_type               = var.instance_type
   vpc_security_group_ids      = [aws_security_group.master.id]
   key_name                    = "aws_adhoc"
@@ -10,13 +10,12 @@ resource "aws_instance" "master" {
   
   tags = { 
     Name = "Master Server"
-    ansibleFilter = "K8S01"
   }
 
 }
 
 resource "aws_instance" "worker" {
-  ami                         = "ami-0e472ba40eb589f49"
+  ami                         = "ami-0e472ba40eb589f49" # ubuntu
   instance_type               = var.instance_type
   vpc_security_group_ids      = [aws_security_group.worker.id]
   key_name                    = "aws_adhoc"
@@ -25,7 +24,6 @@ resource "aws_instance" "worker" {
 
   tags = {
     Name = "Worker Server"
-    ansibleFilter = "K8S01"
  }
 }
 
@@ -56,11 +54,11 @@ resource "null_resource" "null1" {
   ]
 
   provisioner "local-exec" {
-    command = "sleep 60"
+    command = "sleep 30"
   }
 
   provisioner "local-exec" {
-     command = "ansible-playbook -i ./inventory --private-key ${var.private_key} -e 'pub_key=${var.public_key}' playbook.yaml"
+     command = "ansible-playbook -i ./inventory --private-key ${var.private_key} -e 'pub_key=${var.public_key}' playbook.yml"
   }
 
 }

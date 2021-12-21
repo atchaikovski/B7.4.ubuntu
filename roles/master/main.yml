@@ -1,3 +1,5 @@
+---
+
 - hosts: masters
   remote_user: ubuntu
   become: yes
@@ -13,7 +15,7 @@
 
     - name: initialize the cluster
       when: reset_cluster is succeeded
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version stable-1.20 --apiserver-advertise-address {{ ansible_host }}
       args:
         chdir: $HOME
         creates: cluster_initialized.txt

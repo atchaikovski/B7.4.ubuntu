@@ -1,3 +1,5 @@
+---
+
 - hosts: workers
   remote_user: ubuntu
   become: yes

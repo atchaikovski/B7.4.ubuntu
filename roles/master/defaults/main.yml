@@ -1,0 +1,4 @@
+---
+
+#master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4'].address | default(groups['master'][0]) }}"
+master_ip: hostvars[inventory_hostname]['ansible_default_ipv4']['address']
