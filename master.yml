@@ -1,0 +1,60 @@
+- hosts: masters
+  remote_user: ubuntu
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  tasks:
+    - name: Reset Kubernetes component
+      shell: "kubeadm reset --force --cri-socket=/var/run/containerd/containerd.sock"
+      register: reset_cluster
+      become: yes
+
+    - name: initialize the cluster
+      when: reset_cluster is succeeded
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: create .kube directory
+      become: yes
+      become_user: ubuntu
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copies admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+
+    - name: install Pod network
+      become: yes
+      become_user: ubuntu
+      shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml 
+      args:
+        chdir: $HOME
+        
+    - name: Get the token for joining the worker nodes
+      become: yes
+      become_user: ubuntu
+      shell: kubeadm token create  --print-join-command
+      register: kubernetes_join_command
+
+    - name: what's this command look like
+      ansible.builtin.debug: 
+        msg: "{{ kubernetes_join_command.stdout }}"
+
+    - delegate_to: localhost
+      become: yes
+      copy:
+        content: "{{ kubernetes_join_command.stdout_lines[0] }}"
+        dest: /tmp/join_command
+
+    #- name: Copy join command to local file.
+    #  local_action: copy content="{{ kubernetes_join_command.stdout_lines[0] }}" dest="/tmp/_join_command" mode=0777
