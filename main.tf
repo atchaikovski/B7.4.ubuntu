@@ -49,7 +49,7 @@ EOF
 }
 
 # -------------- launch Ansible to deploy k8s on these resources -----------------
-/*
+
 resource "null_resource" "null1" {
   depends_on = [
      local_file.inventory
@@ -64,7 +64,7 @@ resource "null_resource" "null1" {
   }
 
 }
-*/
+
 # --------------- get static IP addresses ------------------
 
 resource "aws_eip" "master_static_ip" {

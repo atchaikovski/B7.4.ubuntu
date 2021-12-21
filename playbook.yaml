@@ -1,0 +1,17 @@
+---
+
+- name: Configure Master node
+  hosts: masters
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+  roles:
+    - master
+
+- name: Configure Worker node
+  hosts: workers
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+  roles:
+    - worker

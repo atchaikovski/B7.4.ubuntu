@@ -26,7 +26,7 @@
         state: directory
         mode: 0755
 
-    - name: copies admin.conf to user's kube config
+    - name: copies admin.conf to users kube config
       copy:
         src: /etc/kubernetes/admin.conf
         dest: /home/ubuntu/.kube/config
@@ -46,7 +46,7 @@
       shell: kubeadm token create  --print-join-command
       register: kubernetes_join_command
 
-    - name: what's this command look like
+    - name: what is this command about
       ansible.builtin.debug: 
         msg: "{{ kubernetes_join_command.stdout }}"
 
@@ -55,6 +55,3 @@
       copy:
         content: "{{ kubernetes_join_command.stdout_lines[0] }}"
         dest: /tmp/join_command
-
-    #- name: Copy join command to local file.
-    #  local_action: copy content="{{ kubernetes_join_command.stdout_lines[0] }}" dest="/tmp/_join_command" mode=0777
