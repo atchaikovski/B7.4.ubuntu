@@ -17,7 +17,7 @@ resource "aws_instance" "master" {
 resource "aws_instance" "worker" {
   ami                         = "ami-0e472ba40eb589f49" # ubuntu
   instance_type               = var.instance_type
-  vpc_security_group_ids      = [aws_security_group.worker.id]
+  vpc_security_group_ids      = [aws_security_group.master.id]
   key_name                    = "aws_adhoc"
   count                       = 1
   associate_public_ip_address = true
